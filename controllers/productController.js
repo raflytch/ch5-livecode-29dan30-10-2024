@@ -1,4 +1,4 @@
-const { Products, Shops, Users } = require("../models");
+const { Products, Shops } = require("../models");
 const { where } = require("sequelize");
 const { Op } = require("sequelize");
 
