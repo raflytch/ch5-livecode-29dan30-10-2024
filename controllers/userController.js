@@ -41,6 +41,8 @@ const findUsers = async (req, res, next) => {
 
     res.status(200).json({
       status: "Success",
+      message: "Success get all users",
+      isSuccess: true,
       data: {
         totalData,
         totalPage,

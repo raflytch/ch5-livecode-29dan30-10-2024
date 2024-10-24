@@ -87,12 +87,11 @@ const getAllProduct = async (req, res) => {
     const offset = (page - 1) * limit;
 
     const products = await Products.findAndCountAll({
-      where: condition,
       include: [
         {
           model: Shops,
           as: "shop",
-          attributes: ["id", "name"],
+          attributes: ["name", "userId"],
           where: shopCondition,
         },
       ],
