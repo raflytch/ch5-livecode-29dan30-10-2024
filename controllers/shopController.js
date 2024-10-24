@@ -76,7 +76,15 @@ const getAllShop = async (req, res) => {
     }
 
     if (stock) {
-      productCondition.stock = stock;
+      productCondition.stock = {
+        [Op.gte]: stock,
+      };
+    }
+
+    let prevPage = page - 1;
+
+    if (prevPage < 1) {
+      prevPage = 1;
     }
 
     const offset = (page - 1) * limit;
@@ -105,6 +113,10 @@ const getAllShop = async (req, res) => {
 
     const totalPages = Math.ceil(totalData / limit);
 
+    let nextPage = Number(page) + 1;
+
+    nextPage = nextPage > totalPages ? totalPages : nextPage;
+
     res.status(200).json({
       status: "Success",
       message: "Success get shops data",
@@ -112,7 +124,9 @@ const getAllShop = async (req, res) => {
       data: {
         totalData,
         totalPages,
+        prevPage: prevPage,
         currentPage: page,
+        nextPage: nextPage,
         shops: shops.rows,
       },
     });

@@ -26,6 +26,12 @@ const findUsers = async (req, res, next) => {
       };
     }
 
+    let prevPage = page - 1;
+
+    if (prevPage < 1) {
+      prevPage = 1;
+    }
+
     const offset = (page - 1) * limit;
 
     const users = await Users.findAndCountAll({
@@ -39,6 +45,10 @@ const findUsers = async (req, res, next) => {
 
     const totalPage = Math.ceil(totalData / limit);
 
+    let nextPage = Number(page) + 1;
+
+    nextPage = nextPage > totalPage ? totalPage : nextPage;
+
     res.status(200).json({
       status: "Success",
       message: "Success get all users",
@@ -46,7 +56,9 @@ const findUsers = async (req, res, next) => {
       data: {
         totalData,
         totalPage,
+        prevPage: prevPage,
         currentPage: page,
+        nextPage: nextPage,
         users: users.rows,
       },
     });

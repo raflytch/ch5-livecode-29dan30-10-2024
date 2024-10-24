@@ -69,11 +69,15 @@ const getAllProduct = async (req, res) => {
     }
 
     if (stock) {
-      condition.stock = stock;
+      condition.stock = {
+        [Op.gte]: stock,
+      };
     }
 
     if (price) {
-      condition.price = price;
+      condition.price = {
+        [Op.gte]: price,
+      };
     }
 
     const shopCondition = {};
@@ -82,6 +86,12 @@ const getAllProduct = async (req, res) => {
       shopCondition.name = {
         [Op.iLike]: `%${shopName}%`,
       };
+    }
+
+    let prevPage = page - 1;
+
+    if (prevPage < 1) {
+      prevPage = 1;
     }
 
     const offset = (page - 1) * limit;
@@ -105,6 +115,10 @@ const getAllProduct = async (req, res) => {
 
     const totalPages = Math.ceil(totalData / limit);
 
+    let nextPage = Number(page) + 1;
+
+    nextPage = nextPage > totalPages ? totalPages : nextPage;
+
     res.status(200).json({
       status: "Success",
       message: "Success get product data",
@@ -112,7 +126,9 @@ const getAllProduct = async (req, res) => {
       data: {
         totalData,
         totalPages,
+        prevPage: prevPage,
         currentPage: page,
+        nextPage: nextPage,
         products: products.rows,
       },
     });
