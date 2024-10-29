@@ -9,7 +9,7 @@ const createShop = async (req, res) => {
     const newShop = await Shops.create({
       name,
       adminEmail,
-      userId,
+      userId: req.user.id,
     });
 
     res.status(201).json({
@@ -50,7 +50,7 @@ const createShop = async (req, res) => {
 
 const getAllShop = async (req, res) => {
   try {
-    // 1. Kita jaga req.query biar gak kemana-mana
+    // Jaga req.query biar gak kemana-mana
     const {
       shopName,
       adminEmail,
@@ -59,6 +59,7 @@ const getAllShop = async (req, res) => {
       page = 1,
       limit = 10,
     } = req.query;
+
     const condition = {};
 
     if (shopName) {
@@ -82,14 +83,30 @@ const getAllShop = async (req, res) => {
     }
 
     let prevPage = page - 1;
-
-    if (prevPage < 1) {
-      prevPage = 1;
-    }
+    if (prevPage < 1) prevPage = 1;
 
     const offset = (page - 1) * limit;
 
-    const shops = await Shops.findAndCountAll({
+    // (tanpa limit dan offset)
+    const totalData = await Shops.count({
+      include: [
+        {
+          model: Products,
+          as: "products",
+          where: productCondition,
+        },
+        {
+          model: Users,
+          as: "user",
+        },
+      ],
+      where: condition,
+    });
+
+    const totalPages = Math.ceil(totalData / limit);
+
+    // Query untuk mendapatkan data shops dengan limit dan offset
+    const shops = await Shops.findAll({
       include: [
         {
           model: Products,
@@ -109,12 +126,7 @@ const getAllShop = async (req, res) => {
       offset: offset,
     });
 
-    const totalData = shops.count;
-
-    const totalPages = Math.ceil(totalData / limit);
-
     let nextPage = Number(page) + 1;
-
     nextPage = nextPage > totalPages ? totalPages : nextPage;
 
     res.status(200).json({
@@ -127,7 +139,7 @@ const getAllShop = async (req, res) => {
         prevPage: prevPage,
         currentPage: page,
         nextPage: nextPage,
-        shops: shops.rows,
+        shops: shops,
       },
     });
   } catch (error) {

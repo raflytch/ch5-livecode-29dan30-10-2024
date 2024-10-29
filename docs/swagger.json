@@ -1,0 +1,354 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Shops API",
+    "description": "API for retrieving and creating shops, including their products and users.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/shops": {
+      "get": {
+        "summary": "Get a list of shops with pagination",
+        "description": "Retrieve a paginated list of shops, filtered by shop name if specified.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of shops to retrieve per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to retrieve",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "shopName",
+            "in": "query",
+            "description": "Filter by shop name (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with list of shops",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Success get shops data"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalData": {
+                          "type": "integer",
+                          "example": 13
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "prevPage": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "currentPage": {
+                          "type": "string",
+                          "example": "2"
+                        },
+                        "nextPage": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "shops": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "Schroeder Inc"
+                              },
+                              "adminEmail": {
+                                "type": ["string", "null"],
+                                "example": null
+                              },
+                              "products": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "example": "Awesome Soft Computer"
+                                    },
+                                    "images": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "example": "https://ik.imagekit.io/imamth/Profile-17-1729202156932_ieaMdNeZB.png?updatedAt=1729202158471"
+                                      }
+                                    },
+                                    "stock": {
+                                      "type": "integer",
+                                      "example": 20
+                                    },
+                                    "price": {
+                                      "type": "integer",
+                                      "example": 13783
+                                    }
+                                  }
+                                }
+                              },
+                              "user": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "example": "Shawna Lindgren"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request due to validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Validation error message"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new Shop",
+        "description": "Endpoint to create a new shop",
+        "tags": ["Shops"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Toko Josss"
+                  },
+                  "userId": {
+                    "type": "integer",
+                    "example": 12
+                  },
+                  "adminEmail": {
+                    "type": "string",
+                    "example": "test@gmail.com"
+                  }
+                },
+                "required": ["name", "userId", "adminEmail"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create new Shop",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Success create new Shop"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "newShop": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": 114
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "Toko Josss"
+                            },
+                            "userId": {
+                              "type": "integer",
+                              "example": 12
+                            },
+                            "adminEmail": {
+                              "type": "string",
+                              "example": "test@gmail.com"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2024-10-28T15:09:02.824Z"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2024-10-28T15:09:02.824Z"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Validation error message here"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
